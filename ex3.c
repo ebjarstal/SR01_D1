@@ -27,7 +27,7 @@ struct Restaurant {
 // fonction qui permet d'allouer dynamiquement de la mémoire à une structure Restaurant et qui renvoie l'adresse de la structure créée
 Restaurant *creer_restaurant(char *nom, char *adresse, Position position, char *specialite);
 
-// fonction qui lit le fichier désigné par 'chemin' et qui stocke les restaurants du fichier dans une structure de type Restaurant
+// fonction qui lit le fichier désigné par 'chemin_global' et qui stocke les restaurants du fichier dans une structure de type Restaurant
 void supprimerChar(char *str, char c);
 int lire_ligne(char *ligne, Restaurant *restaurant);
 int lire_restaurant (char *chemin, Restaurant *restaurants);
@@ -37,11 +37,11 @@ void inserer_restaurant(Restaurant restaurant, char *chemin);
 double calculer_distance(double x1, double x2, double y1, double y2);
 void cherche_restaurant(double x, double y, double rayon_recherche, Restaurant *restaurants, Restaurant *results);
 
-void trier_restaurants_selon_distance(double x, double y, Restaurant *restaurants);
-int verifier_doublon(Restaurant *restaurants, Restaurant *restaurant);
+void trier_restaurants_selon_distance(double x, double y, Restaurant *restaurants[]);
+int verifier_doublon(Restaurant restaurants[], Restaurant restaurant);
 void cherche_par_specialite(double x, double y, char *specialite[], Restaurant *results);
 
-char *chemin = "/Users/ericb/Desktop/UTC/TC04/SR01/SR01_D1/restau.txt";
+char *chemin_global = "/Users/ericb/Desktop/UTC/TC04/SR01/SR01_D1/restau.txt";
 
 int main() {
     Restaurant *restaurants = malloc(sizeof(Restaurant) * MAX_TAB);
@@ -50,13 +50,13 @@ int main() {
         return 1;
     }
 
-    int nb_restaurants = lire_restaurant(chemin, restaurants);
+    int nb_restaurants = lire_restaurant(chemin_global, restaurants);
     printf("%d restaurants dans le fichier.\n", nb_restaurants);
 
-    Restaurant results[MAX_TAB];  // on peut ajuster la taille comme on le souhaite
-    cherche_restaurant(18.5, 7.5, 10, restaurants, results);
+    Restaurant results[nb_restaurants];  // on peut ajuster la taille comme on le souhaite
+    cherche_restaurant(18.5, 7.5, 200, restaurants, results);
 
-    char *specialites[] = {"Cuisine gastronomique"};
+    char *specialites[MAX_TAB] = {"Cuisine gastronomique"};
     cherche_par_specialite(18.5, 7.5, specialites, results);
 
     // libère dynamiquement la mémoire allouée au tableau restaurants
@@ -169,35 +169,19 @@ void cherche_restaurant(double x, double y, double rayon_recherche, Restaurant *
             k++;
         }
     }
-    printf("%d restaurants trouvés à une distance inférieure à %.2lf km de votre position.\n", k, rayon_recherche);
+    printf("%d restaurants trouvés à une distance inférieure à %.2lf unités de votre position.\n", k, rayon_recherche);
 }
 
 
-void trier_restaurants_selon_distance(double x, double y, Restaurant *restaurants) {
-    if (!restaurants) {
-        printf("Liste des restaurants vide.\n");
-        return;
-    }
+void trier_restaurants_selon_distance(double x, double y, Restaurant *restaurants[]) {
 
-    double distance_courant, distance_min;
-    for (int i = 0; &restaurants[i] != NULL; i++) {
-        distance_min = calculer_distance(x, restaurants[i].position.x, y, restaurants[i].position.y);
-        for (int j = i+1; &restaurants[j] != NULL; j++) {
-            distance_courant = calculer_distance(x, restaurants[j].position.x, y, restaurants[j].position.y);
-            if (distance_courant < distance_min) {
-                Restaurant *restaurant_intermediaire = &restaurants[i];
-                restaurants[i] = restaurants[j];
-                restaurants[j] = *restaurant_intermediaire;
-            }
-        }
-    }
     printf("Liste des restaurants triée selon la distance de l'utilisateur.\n");
 }
 
 
-int verifier_doublon(Restaurant *restaurants, Restaurant *restaurant) {
+int verifier_doublon(Restaurant *restaurants, Restaurant restaurant) {
     for (int i = 0; &restaurants[i] != NULL; i++) {
-        if (strcmp(restaurants[i].adresse_restaurant, restaurant->adresse_restaurant) == 0) {
+        if (strcmp(restaurants[i].adresse_restaurant, restaurant.adresse_restaurant) == 0) {
             return 1;
         }
     }
@@ -205,32 +189,25 @@ int verifier_doublon(Restaurant *restaurants, Restaurant *restaurant) {
 }
 
 
-void cherche_par_specialite(double x, double y, char *specialite[], Restaurant *results) {
-    if (!specialite[0]) {
-        printf("Liste des spécialités vide.\n");
-        return;
-    }
-
+void cherche_par_specialite(double x, double y, char *specialite[], Restaurant results[]) {
     Restaurant *restaurants_potentiels = malloc(sizeof(Restaurant)*MAX_TAB);
-    if (!restaurants_potentiels) {
-        printf("Erreur allocation mémoire restaurants potentiels.\n");
-        return;
-    }
-    int nb_restaurants = lire_restaurant(chemin, restaurants_potentiels);
 
-    int k = 0;
-    for (int i = 0; &restaurants_potentiels[i] != NULL && i < MAX_TAB; i++) {
-        for (int j = 0; specialite[j] != NULL && j < MAX_TAB; j++) {
-            Restaurant *restaurant_courant = creer_restaurant(restaurants_potentiels[i].nom_restaurant, restaurants_potentiels[i].adresse_restaurant, restaurants_potentiels[i].position, restaurants_potentiels[i].specialite);
-            if (strcmp(restaurant_courant->specialite, specialite[j]) == 0 && !verifier_doublon(results, restaurant_courant)) {
-                results[k] = *restaurant_courant;
-                k++;
-            }
-            free(restaurant_courant);
+    int i, k = 0;
+    for (i = 0; i < MAX_TAB; i++) {
+        if (results[i].nom_restaurant == NULL) {
+            break;
         }
+        for (int j = 0; j < MAX_TAB && specialite[j]; j++) {
+//            if (strcmp(results[i].specialite, specialite[j]) == 0) {
+//                if (verifier_doublon(restaurants_potentiels, results[i]) == 0) {
+//                    restaurants_potentiels[k] = results[i];
+//                    k++;
+//                }
+//            }
+        }
+//        printf("%s\n", results[i].nom_restaurant);
     }
 
-    trier_restaurants_selon_distance(x, y, results);
-    printf("%d restaurants correspondent aux critères.\n", k);
+    printf("%d restaurants correspondant aux critères.\n", k);
     free(restaurants_potentiels);
 }
