@@ -41,32 +41,39 @@ void trier_restaurants_selon_distance(double x, double y, Restaurant *restaurant
 int verifier_doublon(Restaurant restaurants[], Restaurant restaurant);
 void cherche_par_specialite(double x, double y, char *specialite[], Restaurant *results);
 
+void afficher_menu();
+int traiter_choix();
+int traiter_lire_fichier();
+
 char *chemin_global = "/Users/ericb/Desktop/UTC/TC04/SR01/SR01_D1/restau.txt";
 
 int main() {
-    Restaurant *restaurants = malloc(sizeof(Restaurant) * MAX_TAB);
-    if (restaurants == NULL) {
-        printf("Erreur allocation mémoire pour restaurants\n");
-        return 1;
-    }
+//    Restaurant *restaurants = malloc(sizeof(Restaurant) * MAX_TAB);
+//    if (restaurants == NULL) {
+//        printf("Erreur allocation mémoire pour restaurants\n");
+//        return 1;
+//    }
+//
+//    int nb_restaurants = lire_restaurant(chemin_global, restaurants);
+//    printf("%d restaurants dans le fichier.\n", nb_restaurants);
+//
+//    Restaurant results[nb_restaurants];  // on peut ajuster la taille comme on le souhaite
+//    cherche_restaurant(18.5, 7.5, 200, restaurants, results);
+//
+//    char *specialites[MAX_TAB] = {"Cuisine gastronomique"};
+//    cherche_par_specialite(18.5, 7.5, specialites, results);
+//
+//    // libère dynamiquement la mémoire allouée au tableau restaurants
+//    for (int i = 0; i < nb_restaurants; i++) {
+//        free(restaurants[i].nom_restaurant);
+//        free(restaurants[i].adresse_restaurant);
+//        free(restaurants[i].specialite);
+//    }
+//    free(restaurants);
+//    printf("Mémoire libérée.\n");
 
-    int nb_restaurants = lire_restaurant(chemin_global, restaurants);
-    printf("%d restaurants dans le fichier.\n", nb_restaurants);
-
-    Restaurant results[nb_restaurants];  // on peut ajuster la taille comme on le souhaite
-    cherche_restaurant(18.5, 7.5, 200, restaurants, results);
-
-    char *specialites[MAX_TAB] = {"Cuisine gastronomique"};
-    cherche_par_specialite(18.5, 7.5, specialites, results);
-
-    // libère dynamiquement la mémoire allouée au tableau restaurants
-    for (int i = 0; i < nb_restaurants; i++) {
-        free(restaurants[i].nom_restaurant);
-        free(restaurants[i].adresse_restaurant);
-        free(restaurants[i].specialite);
-    }
-    free(restaurants);
-    printf("Mémoire libérée.\n");
+    afficher_menu();
+    traiter_choix();
 
     return 0;
 }
@@ -210,4 +217,45 @@ void cherche_par_specialite(double x, double y, char *specialite[], Restaurant r
 
     printf("%d restaurants correspondant aux critères.\n", k);
     free(restaurants_potentiels);
+}
+
+
+void afficher_menu() {
+    printf("––– MENU UTILISATEUR –––\n");
+    printf("(1) Lire fichier texte\n");
+    printf("(2) Insérer un restaurant à la fin du fichier texte\n");
+    printf("(3) Chercher un restaurant en fonction de votre position\n");
+    printf("(4) Chercher un restaurant en fonction de sa spécialité et de votre position\n");
+    printf("(0) Quitter le programme\n");
+    printf("\nVotre choix: ");
+}
+
+
+int traiter_choix() {
+    int choix;
+    scanf("%d", &choix);
+
+    switch (choix) {
+        case 1:
+            traiter_lire_fichier();
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 0:
+            exit(0);
+        default:
+            main();
+            break;
+    }
+
+    return choix;
+}
+
+
+int traiter_lire_fichier() {
+    
 }
