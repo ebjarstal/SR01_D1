@@ -3,7 +3,7 @@
 #define NB_LIGNES (MAXN+2)
 #define NB_COLONNES 8
 
-// Fonction pour trouver la note maximale :
+//  pour trouver la note maximale
 double trouverNoteMaximale(const double POINTS[], int N) {
     double max = POINTS[0];
     for (int i = 1; i < N; i++) {
@@ -14,7 +14,7 @@ double trouverNoteMaximale(const double POINTS[], int N) {
     return max;
 }
 
-// Fonction pour trouver la note minimale :
+//  pour trouver la note minimale
 double trouverNoteMinimale(const double POINTS[], int N) {
     double min = POINTS[0];
     for (int i = 1; i < N; i++) {
@@ -25,7 +25,7 @@ double trouverNoteMinimale(const double POINTS[], int N) {
     return min;
 }
 
-// Fonction pour calculer la moyenne des notes :
+// pour calculer la moyenne des notes
 double calculerMoyenne(const double POINTS[], int N) {
     double somme = 0.0;
     for (int i = 0; i < N; i++) {
@@ -35,12 +35,12 @@ double calculerMoyenne(const double POINTS[], int N) {
 }
 
 void classerNotes(const double POINTS[], int N, int NOTES[7]) {
-    // On initialise le tableau NOTES à zéro :
+    // initialise le tableau NOTES à zéro
     for (int i = 0; i < 7; i++) {
         NOTES[i] = 0;
     }
 
-    // On classe les notes dans les intervalles appropriés :
+    // classe les notes dans les intervalles appropriés(
     for (int i = 0; i < N; i++) {
         if (POINTS[i] >= 60) {
             NOTES[6]++;
